@@ -1,20 +1,18 @@
 <template>
   <div 
     class="carousel-gen-wrp"
-    :style="{
-        'max-height':height,
-        'max-width':width,
-    }"
+    
   >
-      <div class="carousel-outer-wrp">
+      <div class="carousel-outer-wrp"
+        
+      >
           <div class="carousel-inner-wrp"
             :style="{
-                
                 'transform':`translateX(${translate.translateX}px)`,
                 'transition':this.translate.transition
             }"
           >
-            <slot name="slides" v-bind:computedSlides="computedSlides"/>
+            <slot name="slides" v-bind:computedSlides="computedSlides" />
           </div> 
       </div>   
       <slot name="arrowRight" v-bind:carousel="self"/>
@@ -160,7 +158,7 @@ export default {
                 this.resetTimer()
                 this.setTimer()
             }
-            if ((this.isTouch && this.touchDrag) || this.mouseDrag) {
+            if ((this.isTouch && this.touchDrag) || this.touchDrag) {
                 this.$el.addEventListener(
                     this.isTouch ? "touchstart" : "mousedown",
                     this.onStart
@@ -180,7 +178,7 @@ export default {
                 return;
             }
             if(!this.dragable)return
-
+            
             this.$el.addEventListener("dragstart", e => e.preventDefault());
            
             this.resetTimer()
@@ -273,7 +271,9 @@ export default {
 
         move(x){
             if(!this.dragable)return
-            this.pauseTimer()
+            if(this.autoPlay){
+                this.pauseTimer()
+            }
             
             if(this.carouselPositionX <= this.maxCarouselPositionX){
                 this.translate.transition = ''
@@ -302,11 +302,13 @@ export default {
 
     mounted(){
         window.addEventListener('orientationchange',this.init)
+        window.addEventListener('resize',this.init)
     },
 
     beforeDestroy(){
         this.reset()
         window.removeEventListener('orientationchange',this.init)
+        window.removeEventListener('resize',this.init)
     },
 
     watch:{
@@ -322,22 +324,26 @@ export default {
 
 <style>
 .carousel-gen-wrp{
-    width: 100%;
-    height: 100%;
+    /* width: 100%;
+    height: 100%; */
+    width: auto;
+    height: auto;
     position: relative;
 }
 
 .carousel-outer-wrp{
-    width: inherit;
-    height: inherit;
+    width: auto;
+    height: auto;
+    /* width: 100%;
+    height: 100%; */
     position: relative;
     overflow: hidden;
 }
 
 .carousel-inner-wrp{
     display: flex; 
-    width: inherit;
-    height: inherit;
+    width: auto;
+    height: auto;
     user-select: none;
     outline: none;
 }

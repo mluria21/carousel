@@ -16,8 +16,9 @@ export default {
 
 <style>
 .carousel-slide-wrp{
-    /* flex-basis: inherit; */
-    width: inherit;
+    flex-basis: 100%;
+    /* width: 100%;
+    height: 100%; */
     flex-grow: 0;
     flex-shrink: 0;
     outline: none;

@@ -2,17 +2,20 @@
   <div id="app">
     <div class="wrapper">
       <carousel 
-        :height="'400px'"
-        :width="'600px'"
         :slides="urls"
-        :autoPlay="true"
+        :autoPlay="false"
       >
         <template v-slot:slides="{computedSlides}">
           <slide
             v-for="(url,index) in computedSlides"
             :key="index"
           >
-            <img style="width:100%;height:100%" :src="url" alt="">
+            <div style="width: 100%;
+                      height: 100%;
+                      max-width: 1200px;
+                      max-height: 400px;">
+              <img style="width: 100%;height: 100%;object-fit: cover;" :src="url" alt="">
+            </div>
           </slide>
         </template>
         
@@ -49,11 +52,11 @@ export default {
   data(){
     return{
       urls:[
-        'https://cdn.shopeichlers.com/media/38765/conversions/s0gi2o0irzc7xsuj__Yiddish-Banner-Apr2020-mobile-470.jpg',
-        'https://cdn.shopeichlers.com/media/34098/conversions/8a2ty852qak88wxh__Shabbos-Banner---Mobile-470.jpg',
-        'https://cdn.shopeichlers.com/media/37652/conversions/xyan3a6o5xzi6ecw__SeforimBanner-Apr2020-mobile-470.jpg',
-        'https://cdn.shopeichlers.com/media/37647/conversions/07e8chgww5ktm1wb__BookSuperstore-Apr2020-Moblie-470.jpg',
-        'https://cdn.shopeichlers.com/media/43690/conversions/vjo6oxvqt6rte6fn__main-toy-banner-02-470.jpg'
+        'https://cdn.shopeichlers.com/media/38765/conversions/s0gi2o0irzc7xsuj__Yiddish-Banner-Apr2020-mobile-1800.jpg',
+        'https://cdn.shopeichlers.com/media/34098/conversions/8a2ty852qak88wxh__Shabbos-Banner---Mobile-1800.jpg',
+        'https://cdn.shopeichlers.com/media/37652/conversions/xyan3a6o5xzi6ecw__SeforimBanner-Apr2020-mobile-1800.jpg',
+        'https://cdn.shopeichlers.com/media/37647/conversions/07e8chgww5ktm1wb__BookSuperstore-Apr2020-Moblie-1800.jpg',
+        'https://cdn.shopeichlers.com/media/43690/conversions/vjo6oxvqt6rte6fn__main-toy-banner-02-1800.jpg'
       ]
     }
   },
@@ -73,8 +76,10 @@ export default {
 }
 
 .wrapper{
-  max-width: 800px;
+  max-width: 1200px;
+  max-height: 400px;
   width: 100%;
+  height: 100%;
 }
 
 .arrow{
