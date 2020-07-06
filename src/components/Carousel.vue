@@ -178,6 +178,7 @@ export default {
                 return;
             }
             if(!this.dragable)return
+            if (e.touches.length == 2)return
             
             this.$el.addEventListener("dragstart", e => e.preventDefault());
            

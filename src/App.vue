@@ -1,5 +1,13 @@
 <template>
   <div id="app">
+    <!-- <zoomable>
+        <div style="width: 100%;
+                  height: 100%;
+                  max-width: 1200px;
+                  max-height: 400px;">
+          <img style="width: 100%;height: 100%;object-fit: cover;" src="https://cdn.shopeichlers.com/media/43690/conversions/vjo6oxvqt6rte6fn__main-toy-banner-02-1800.jpg" alt="">
+        </div>
+      </zoomable> -->
     <div class="wrapper">
       <carousel 
         :slides="urls"
@@ -10,12 +18,14 @@
             v-for="(url,index) in computedSlides"
             :key="index"
           >
-            <div style="width: 100%;
-                      height: 100%;
-                      max-width: 1200px;
-                      max-height: 400px;">
-              <img style="width: 100%;height: 100%;object-fit: cover;" :src="url" alt="">
-            </div>
+            <zoomable>
+              <div style="width: 100%;
+                        height: 100%;
+                        max-width: 1200px;
+                        max-height: 400px;">
+                <img style="width: 100%;height: 100%;object-fit: cover;" :src="url" alt="">
+              </div>
+            </zoomable>
           </slide>
         </template>
         
@@ -46,6 +56,7 @@
 <script>
 import Carousel from './components/Carousel'
 import Slide from './components/Slide'
+import Zoomable from './components/Zoomable'
 export default {
   name: 'App',
 
@@ -63,7 +74,8 @@ export default {
 
   components: {
     Carousel,
-    Slide
+    Slide,
+    Zoomable
   }
 }
 </script>
