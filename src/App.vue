@@ -14,7 +14,7 @@
                       height: 100%;
                       max-width: 1200px;
                       max-height: 400px;">
-              <img style="width: 100%;height: 100%;object-fit: cover;" :src="url" alt="">
+              <img v-image-load:fade style="width: 100%;height: 100%;object-fit: cover;" :src="url" alt="">
             </div>
           </slide>
         </template>
