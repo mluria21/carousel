@@ -1,11 +1,7 @@
 <template>
   <div 
-    class="carousel-gen-wrp"
-    
-  >
-      <div class="carousel-outer-wrp"
-        
-      >
+    class="carousel-gen-wrp">
+      <div class="carousel-outer-wrp">
           <div class="carousel-inner-wrp"
             :style="{
                 'transform':`translateX(${translate.translateX}px)`,
@@ -178,7 +174,6 @@ export default {
                 return;
             }
             if(!this.dragable)return
-            if (e.touches.length == 2)return
             
             this.$el.addEventListener("dragstart", e => e.preventDefault());
            
@@ -325,26 +320,28 @@ export default {
 
 <style>
 .carousel-gen-wrp{
-    /* width: 100%;
-    height: 100%; */
-    width: auto;
-    height: auto;
+    width: 100%;
+    height: 100%;
+    /* width: auto;
+    height: auto; */
     position: relative;
 }
 
 .carousel-outer-wrp{
-    width: auto;
-    height: auto;
-    /* width: 100%;
-    height: 100%; */
+    /* width: auto;
+    height: auto; */
+    width: 100%;
+    height: 100%;
     position: relative;
     overflow: hidden;
 }
 
 .carousel-inner-wrp{
     display: flex; 
-    width: auto;
-    height: auto;
+    /* width: auto;
+    height: auto; */
+    width: 100%;
+    height: 100%;
     user-select: none;
     outline: none;
 }
