@@ -29,6 +29,17 @@ export default {
                 return []
             }
         },
+        slidesPerPage:{
+            type:Number,
+            default:1
+        },
+        direction:{
+            type:String,
+            validator: function(value) {
+                return (["row", "column"].indexOf(value) !== -1 );
+            },
+            default: "row"
+        },
         height:String,
         width:String,
         easing: {
@@ -56,7 +67,7 @@ export default {
         },
         touchDrag: {
             type: Boolean,
-            default: true
+            default: false
         },
     },
 
@@ -94,6 +105,9 @@ export default {
         },
 
         maxCarouselPositionX(){
+            if(this.slidesPerPage > 1){
+                return - ((this.numberOfSlides * this.slideWidth) + this.slideWidth)
+            }
             return -(this.carouselLength - this.slideWidth)
         },
 
@@ -116,6 +130,10 @@ export default {
 
         self(){
             return this
+        },
+
+        carouselIsNotDuplicated(){
+            return this.slidesPerPage > 1 && this.slides.length <= this.slidesPerPage
         }
     },
 
@@ -135,14 +153,22 @@ export default {
         },
 
         async init(){ 
-            this.reset()   
-            this.computedSlides = [...this.slides.slice(),...this.slides.slice()]  
+            this.reset() 
+
+            if(this.carouselIsNotDuplicated){
+                this.computedSlides = this.slides.slice() 
+            }else{
+                this.computedSlides = [...this.slides.slice(),...this.slides.slice()]  
+            }
+            
             await new Promise(resolve => setTimeout(resolve, 1000));
             
             this.carouselLength = this.$el.querySelector('[class="carousel-inner-wrp"]').scrollWidth
-            this.translate.transition = ''
-            this.translate.translateX = - (this.carouselLength / 2)
-
+            if(!this.carouselIsNotDuplicated){
+                this.translate.transition = ''
+                this.translate.translateX = - (this.carouselLength / 2)
+            }
+            
             let counter = 0
             while(counter > this.maxCarouselPositionX){
                 this.moves.push(counter)
@@ -266,14 +292,19 @@ export default {
         },
 
         move(x){
-            if(!this.dragable)return
+            // if(!this.dragable)return
+            if(this.carouselIsNotDuplicated)return
             if(this.autoPlay){
                 this.pauseTimer()
             }
             
             if(this.carouselPositionX <= this.maxCarouselPositionX){
                 this.translate.transition = ''
-                this.translate.translateX = - ((this.carouselLength / 2) - this.slideWidth) 
+                if(this.slidesPerPage > 1){
+                    this.translate.translateX -=  - (this.carouselLength / 2)
+                }else{
+                    this.translate.translateX = - ((this.carouselLength / 2) - this.slideWidth)
+                }      
             }
 
             if(this.carouselPositionX >= this.minCarouselPositionX){
@@ -313,6 +344,12 @@ export default {
              handler(){
                 this.init()
             }
+        }
+    },
+
+    provide(){
+        return {
+            carousel:this.self
         }
     }
 }
