@@ -2,7 +2,10 @@
   <div 
     tabindex="-1" 
     class="carousel-slide-wrp"
-    :style="{'flex-basis': flexBasis}"
+    :style="{
+        'flex-basis': flexBasis,
+        'height':height
+    }"
   >
       <slot></slot>
   </div>
@@ -19,7 +22,13 @@ export default {
     computed:{
         flexBasis(){
             return `${100 / this.carousel.slidesPerPage}%`
-        } 
+        },
+
+        height(){
+            return this.carousel.direction === 'row' ?
+                `100%`
+                :`${100 / this.carousel.slidesPerPage}%`
+        }
     },
 
     inject:['carousel']

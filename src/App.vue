@@ -3,8 +3,10 @@
     <div class="wrapper">
       <carousel 
         :slides="urls"
-        :autoPlay="false"
-        :slidesPerPage="4"
+        :autoPlay="true"
+        :slidesPerPage="1"
+        :direction="'column'"
+        :height="'400px'"
       >
         <template v-slot:slides="{computedSlides}">
           <slide
@@ -116,7 +118,6 @@ export default {
   max-height: 400px;
   width: 100%;
   height: 100%;
-  /* overflow: hidden; */
 }
 
 .arrow{

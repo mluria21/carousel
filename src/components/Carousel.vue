@@ -1,11 +1,12 @@
 <template>
-  <div 
-    class="carousel-gen-wrp">
+  <div class="carousel-gen-wrp" :style="{'height':height}">
       <div class="carousel-outer-wrp">
           <div class="carousel-inner-wrp"
             :style="{
                 'transform':`translateX(${translate.translateX}px)`,
-                'transition':this.translate.transition
+                'transform':`translateY(${translate.translateY}px)`,
+                'transition':this.translate.transition,
+                'flex-direction':direction
             }"
           >
             <slot name="slides" v-bind:computedSlides="computedSlides" />
@@ -40,7 +41,10 @@ export default {
             },
             default: "row"
         },
-        height:String,
+        height:{
+            type:String,
+            default:'100%'
+        },
         width:String,
         easing: {
             type: String,
@@ -75,6 +79,7 @@ export default {
         return{
             translate:{
                 translateX:0,
+                translateY:0,
                 transition:''
             },
             carouselLength:0,
@@ -100,11 +105,26 @@ export default {
             return this.internalNumberOfSlides / 2
         },
 
+        isColumn(){
+            return this.direction === 'column'
+        },
+
         carouselPositionX(){
             return this.translate.translateX
         },
 
+        carouselPositionY(){
+            return this.translate.translateY
+        },
+
         maxCarouselPositionX(){
+            if(this.slidesPerPage > 1){
+                return - ((this.numberOfSlides * this.slideWidth) + this.slideWidth)
+            }
+            return -(this.carouselLength - this.slideWidth)
+        },
+
+        maxCarouselPositionY(){
             if(this.slidesPerPage > 1){
                 return - ((this.numberOfSlides * this.slideWidth) + this.slideWidth)
             }
@@ -115,7 +135,15 @@ export default {
             return 0
         },
 
+        minCarouselPositionY(){
+            return 0
+        },
+
         slideWidth(){
+            return this.carouselLength / this.computedSlides.length
+        },
+
+        slideHeight(){
             return this.carouselLength / this.computedSlides.length
         },
 
@@ -163,18 +191,35 @@ export default {
             
             await new Promise(resolve => setTimeout(resolve, 1000));
             
-            this.carouselLength = this.$el.querySelector('[class="carousel-inner-wrp"]').scrollWidth
+            if(this.isColumn){
+                this.carouselLength = this.$el.querySelector('[class="carousel-inner-wrp"]').scrollHeight
+            }else{
+                this.carouselLength = this.$el.querySelector('[class="carousel-inner-wrp"]').scrollWidth
+            }
+
             if(!this.carouselIsNotDuplicated){
                 this.translate.transition = ''
-                this.translate.translateX = - (this.carouselLength / 2)
+                if(this.isColumn){
+                    this.translate.translateY = - (this.carouselLength / 2)
+                }else{
+                    this.translate.translateX = - (this.carouselLength / 2)
+                }    
             }
             
             let counter = 0
-            while(counter > this.maxCarouselPositionX){
-                this.moves.push(counter)
-                counter += -this.slideWidth
+            if(this.isColumn){
+                while(counter > this.maxCarouselPositionY){
+                    this.moves.push(counter)
+                    counter += -this.slideHeight
+                }
+                this.moves.push(this.maxCarouselPositionY)
+            }else{
+                while(counter > this.maxCarouselPositionX){
+                    this.moves.push(counter)
+                    counter += -this.slideWidth
+                }
+                this.moves.push(this.maxCarouselPositionX)
             }
-            this.moves.push(this.maxCarouselPositionX)
             
             if(this.autoPlay){
                 this.resetTimer()
@@ -276,7 +321,9 @@ export default {
 
         setTimer(){
             this.interval = setInterval(() => {
-                this.move(-this.slideWidth)
+                this.isColumn ?
+                    this.move(-this.slideHeight)
+                    :this.move(-this.slideWidth)
             }, this.autoPlayTime);
         },
 
@@ -298,24 +345,45 @@ export default {
                 this.pauseTimer()
             }
             
-            if(this.carouselPositionX <= this.maxCarouselPositionX){
-                this.translate.transition = ''
-                if(this.slidesPerPage > 1){
-                    this.translate.translateX -=  - (this.carouselLength / 2)
-                }else{
-                    this.translate.translateX = - ((this.carouselLength / 2) - this.slideWidth)
-                }      
-            }
+            if(this.isColumn){
+                if(this.carouselPositionY <= this.maxCarouselPositionY){
+                    this.translate.transition = ''
+                    if(this.slidesPerPage > 1){
+                        this.translate.translateY -=  - (this.carouselLength / 2)
+                    }else{
+                        this.translate.translateY = - ((this.carouselLength / 2) - this.slideHeight)
+                    }      
+                }
 
-            if(this.carouselPositionX >= this.minCarouselPositionX){
-                this.translate.transition = ''
-                this.translate.translateX = - (this.carouselLength / 2) 
+                if(this.carouselPositionY >= this.minCarouselPositionY){
+                    this.translate.transition = ''
+                    this.translate.translateY = - (this.carouselLength / 2) 
+                }
+            
+                setTimeout(() => {
+                    this.translate.transition = `${this.speed}ms ${this.easing} transform`
+                    this.translate.translateY += x
+                });
+            }else{
+                if(this.carouselPositionX <= this.maxCarouselPositionX){
+                    this.translate.transition = ''
+                    if(this.slidesPerPage > 1){
+                        this.translate.translateX -=  - (this.carouselLength / 2)
+                    }else{
+                        this.translate.translateX = - ((this.carouselLength / 2) - this.slideWidth)
+                    }      
+                }
+
+                if(this.carouselPositionX >= this.minCarouselPositionX){
+                    this.translate.transition = ''
+                    this.translate.translateX = - (this.carouselLength / 2) 
+                }
+            
+                setTimeout(() => {
+                    this.translate.transition = `${this.speed}ms ${this.easing} transform`
+                    this.translate.translateX += x
+                });
             }
-           
-            setTimeout(() => {
-                this.translate.transition = `${this.speed}ms ${this.easing} transform`
-                this.translate.translateX += x
-            });
         },
 
         goToIndex(index){   
@@ -358,9 +426,6 @@ export default {
 <style>
 .carousel-gen-wrp{
     width: 100%;
-    height: 100%;
-    /* width: auto;
-    height: auto; */
     position: relative;
 }
 
